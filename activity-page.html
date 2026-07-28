@@ -1,0 +1,1008 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>biubiu 加速器 · 开学季活动页原型</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Allura&family=Great+Vibes&family=Ma+Shan+Zheng&family=Noto+Sans+SC:wght@400;500;700;900&family=ZCOOL+QingKe+HuangYou&display=swap" rel="stylesheet">
+<style>
+:root{
+  --page:#060912;
+  --cyan:#19e3ff; --blue:#2979ff; --electric:#00b3ff;
+  --orange:#ff9e29; --gold1:#ffe07a; --gold2:#ffb300; --red:#ff4d4d; --green:#19e0c0;
+  --ink:#fff; --mut:rgba(255,255,255,.55);
+  --fd:'ZCOOL QingKe HuangYou','Noto Sans SC',sans-serif;
+  --fb:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  background:var(--page);font-family:var(--fb);color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:42px 20px;overflow:auto;
+}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(820px 480px at 14% -8%,rgba(41,121,255,.13),transparent 64%),
+  radial-gradient(720px 440px at 92% 108%,rgba(0,179,255,.11),transparent 64%);}
+
+/* ===== 加速器窗口（固定尺寸，悬浮，不占满 web） ===== */
+.device{
+  position:relative;z-index:1;flex:none;width:1280px;height:720px;
+  border-radius:18px;overflow:hidden;display:flex;flex-direction:column;
+  background:
+    radial-gradient(820px 520px at 90% -14%,rgba(0,179,255,.34),transparent 60%),
+    radial-gradient(700px 460px at -6% 116%,rgba(41,121,255,.26),transparent 60%),
+    radial-gradient(560px 380px at 50% 8%,rgba(25,227,255,.10),transparent 60%),
+    linear-gradient(160deg,#1c2a63 0%,#131c44 48%,#0c1230 100%);
+  box-shadow:0 44px 100px rgba(0,0,0,.66),0 0 0 1px rgba(255,255,255,.07),0 0 90px rgba(41,121,255,.10);
+  animation:winIn .7s cubic-bezier(.2,.8,.3,1) backwards;
+}
+@keyframes winIn{from{opacity:0;transform:translateY(30px) scale(.97)}}
+.device::after{content:'';position:absolute;inset:0;pointer-events:none;border-radius:18px;
+  background:repeating-linear-gradient(0deg,rgba(255,255,255,.012) 0 1px,transparent 1px 3px);mix-blend-mode:overlay;}
+
+/* 漂浮装饰：飘带 / 纸屑 / 星 / 光斑 */
+.deco{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1}
+.ribbon{position:absolute;top:18px;left:46%;width:60px;height:24px;border-radius:14px;
+  background:linear-gradient(120deg,var(--electric),#0090ff);transform:rotate(-18deg);opacity:.85;
+  box-shadow:0 0 18px rgba(0,179,255,.5);animation:sway 7s ease-in-out infinite;}
+@keyframes sway{0%,100%{transform:rotate(-18deg) translateY(0)}50%{transform:rotate(-12deg) translateY(6px)}}
+.confetti{position:absolute;width:9px;height:14px;border-radius:2px;opacity:.7;animation:fall linear infinite}
+.confetti.c1{left:8%;top:-20px;background:var(--cyan);animation-duration:9s;transform:rotate(20deg)}
+.confetti.c2{left:30%;top:-20px;background:var(--orange);animation-duration:11s;animation-delay:2s;transform:rotate(-25deg)}
+.confetti.c3{left:70%;top:-20px;background:var(--electric);animation-duration:10s;animation-delay:1s;transform:rotate(35deg)}
+.confetti.c4{left:88%;top:-20px;background:var(--green);animation-duration:12s;animation-delay:3s;transform:rotate(-15deg)}
+@keyframes fall{0%{transform:translateY(-30px) rotate(0)}100%{transform:translateY(760px) rotate(360deg)}}
+.star{position:absolute;width:14px;height:14px;background:var(--cyan);
+  clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+  opacity:.5;animation:twinkle 3s ease-in-out infinite}
+.star.s1{left:3%;top:34%;background:#ff7ad1}.star.s2{left:5%;top:62%;width:9px;height:9px;animation-delay:1s}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:.7;transform:scale(1.15)}}
+.orb{position:absolute;border-radius:50%;filter:blur(1px)}
+.orb.o1{width:7px;height:7px;background:var(--cyan);left:44%;top:24%;box-shadow:0 0 10px var(--cyan);animation:bob 6s ease-in-out infinite}
+.orb.o2{width:5px;height:5px;background:var(--orange);left:62%;top:14%;animation:bob 8s ease-in-out infinite reverse}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-14px)}}
+
+/* ===== 顶栏 ===== */
+.titlebar{height:54px;flex:none;display:flex;align-items:center;gap:22px;padding:0 22px;
+  background:rgba(0,0,0,.20);border-bottom:1px solid rgba(255,255,255,.06);position:relative;z-index:6}
+.back{display:flex;align-items:center;gap:6px;height:32px;padding:0 16px;border-radius:99px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);font-size:13.5px;color:var(--mut);
+  cursor:pointer;transition:all .2s}
+.back:hover{background:rgba(255,255,255,.15);color:#fff;transform:translateX(-2px)}
+.tabs{display:flex;gap:30px;margin-left:8px}
+.tab{font-size:15.5px;color:var(--mut);position:relative;padding:6px 2px;cursor:pointer;transition:color .2s}
+.tab:hover{color:#fff}
+.tab.on{color:var(--orange);font-weight:700}
+.tab.on::after{content:'';position:absolute;left:50%;bottom:-3px;transform:translateX(-50%);width:24px;height:3px;border-radius:2px;background:var(--orange);box-shadow:0 0 9px rgba(255,158,41,.7)}
+.actions{margin-left:auto;display:flex;gap:11px}
+.action{height:30px;padding:0 15px;border-radius:99px;display:flex;align-items:center;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);font-size:13px;color:var(--mut);
+  cursor:pointer;transition:all .2s}
+.action:hover{background:rgba(255,255,255,.14);color:#fff;transform:translateY(-1px)}
+
+/* ===== 内容 ===== */
+.content{flex:1;display:flex;gap:18px;padding:18px 22px 20px;min-height:0;position:relative;z-index:3}
+.main{flex:1;display:flex;flex-direction:column;gap:16px;min-width:0}
+
+/* ===== Banner ===== */
+.banner{height:262px;flex:none;border-radius:16px;position:relative;overflow:hidden;
+  background:linear-gradient(112deg,#26408f 0%,#2c43a0 34%,#1d4196 66%,#173a80 100%);
+  border:1px solid rgba(25,227,255,.2)}
+.banner .glow{position:absolute;border-radius:50%;pointer-events:none}
+.banner .g1{width:400px;height:400px;right:-70px;top:-170px;background:radial-gradient(circle,rgba(25,227,255,.30),transparent 66%);animation:drift 9s ease-in-out infinite alternate}
+.banner .g2{width:320px;height:320px;right:170px;bottom:-180px;background:radial-gradient(circle,rgba(0,179,255,.30),transparent 66%);animation:drift 11s ease-in-out infinite alternate-reverse}
+@keyframes drift{from{transform:translate(0,0)}to{transform:translate(-26px,16px)}}
+.streak{position:absolute;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(25,227,255,.7),transparent)}
+.streak.s1{width:240px;left:40%;top:38px;transform:rotate(-8deg);opacity:.5}
+.streak.s2{width:170px;left:48%;top:70px;transform:rotate(-8deg);opacity:.32}
+.streak.s3{width:120px;left:44%;bottom:50px;transform:rotate(-8deg);opacity:.28}
+/* 电光网格地面 */
+.gridfloor{position:absolute;left:-10%;right:-10%;bottom:-46px;height:150px;pointer-events:none;opacity:.5;
+  background:linear-gradient(rgba(25,227,255,.30) 1px,transparent 1px),linear-gradient(90deg,rgba(25,227,255,.30) 1px,transparent 1px);
+  background-size:44px 30px;transform:perspective(320px) rotateX(58deg);
+  -webkit-mask-image:linear-gradient(transparent,#000 45%);mask-image:linear-gradient(transparent,#000 45%)}
+/* 底部能量流动线 */
+.flowline{position:absolute;left:0;right:0;bottom:0;height:3px;overflow:hidden;pointer-events:none}
+.flowline::before{content:'';position:absolute;top:0;bottom:0;left:-40%;width:40%;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  filter:blur(1px);animation:flow 3.2s linear infinite}
+@keyframes flow{to{left:100%}}
+.banner-copy{position:absolute;left:32px;top:50%;transform:translateY(-50%);z-index:4}
+.tagline{display:flex;align-items:center;margin-bottom:18px}
+.tag-merged{height:32px;padding:0 18px;border-radius:99px;display:inline-flex;align-items:center;
+  background:linear-gradient(135deg,#ffe07a 0%,#ffc93c 55%,#ffb300 100%);color:#7a4a00;
+  font-size:13.5px;font-weight:700;letter-spacing:.5px;
+  box-shadow:0 4px 16px rgba(255,179,0,.35),inset 0 1px 0 rgba(255,255,255,.65);
+  animation:tagIn .6s .35s cubic-bezier(.2,.8,.3,1.3) backwards}
+@keyframes tagIn{from{opacity:0;transform:translateY(-10px) scale(.9)}}
+.tag-merged i{font-style:normal;margin:0 8px;color:rgba(122,74,0,.45);font-weight:400}
+h1{font-family:'Ma Shan Zheng','ZCOOL QingKe HuangYou',var(--fb);font-weight:400;font-size:66px;line-height:1.02;letter-spacing:6px;color:#fff;
+  text-shadow:0 0 20px rgba(25,227,255,.6),0 0 48px rgba(0,179,255,.5),0 4px 0 rgba(16,26,72,.7),0 6px 14px rgba(0,0,0,.45);
+  animation:glow 3.2s ease-in-out infinite}
+@keyframes glow{0%,100%{text-shadow:0 0 20px rgba(25,227,255,.6),0 0 48px rgba(0,179,255,.5),0 4px 0 rgba(16,26,72,.7),0 6px 14px rgba(0,0,0,.45)}50%{text-shadow:0 0 30px rgba(25,227,255,.85),0 0 68px rgba(0,179,255,.65),0 4px 0 rgba(16,26,72,.7),0 6px 14px rgba(0,0,0,.45)}}
+/* 右侧背景剪影（弱化，衬托双冠军） */
+.crew{position:absolute;right:8px;bottom:0;width:440px;height:100%;pointer-events:none;z-index:2}
+.fig{position:absolute;bottom:0;background:#0a1030;border-radius:40px 40px 0 0}
+.fig::before{content:'';position:absolute;top:-22px;left:50%;transform:translateX(-50%);width:30px;height:30px;border-radius:50%;background:inherit}
+.fig.b1{left:4px;width:44px;height:86px;opacity:.4}
+.fig.b2{right:4px;width:40px;height:74px;opacity:.35}
+/* 宿舍四人开黑欢呼插画（简化风格化） */
+.dorm{position:absolute;right:120px;bottom:0;width:340px;height:227px;z-index:4;overflow:visible;
+  filter:drop-shadow(0 0 24px rgba(40,90,255,.35));animation:champIn .7s .5s cubic-bezier(.2,.8,.3,1) backwards}
+.dorm .d-back{animation:dormBob 3.4s ease-in-out infinite}
+.dorm .d-b2{animation-delay:.6s}
+.dorm .d-front{animation:dormBob 2.8s ease-in-out infinite}
+.dorm .d-f2{animation-delay:.4s}
+.dorm .d-spark path{animation:sparkTw 2.2s ease-in-out infinite}
+.dorm .d-spark path:nth-child(2){animation-delay:.7s}
+.dorm .d-spark path:nth-child(3){animation-delay:1.3s}
+@keyframes dormBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+/* 双冠军并排（旧 · 已由 .dorm 取代，保留备用） */
+.champs{position:absolute;right:132px;bottom:0;display:flex;align-items:flex-end;gap:58px;z-index:4}
+.champ{position:relative;width:120px;height:224px;animation:champIn .7s cubic-bezier(.2,.8,.3,1) backwards}
+.champ:nth-child(1){animation-delay:.5s}
+.champ:nth-child(2){animation-delay:.64s;margin-left:-30px}
+@keyframes champIn{from{opacity:0;transform:translateY(32px)}}
+.cspot{position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);width:172px;height:64px;
+  background:radial-gradient(ellipse at center,rgba(25,227,255,.38),transparent 70%);animation:spotPulse 3.4s ease-in-out infinite}
+@keyframes spotPulse{0%,100%{opacity:.7}50%{opacity:1}}
+.cfig{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:74px;height:148px;border-radius:38px 38px 0 0;
+  background:linear-gradient(180deg,#eef3ff 0%,#b9c9ef 22%,#101a44 22%);
+  box-shadow:inset 3px 0 0 rgba(25,227,255,.35),inset -3px 0 0 rgba(0,179,255,.25),0 0 26px rgba(25,227,255,.22)}
+.cfig::before{content:'';position:absolute;top:-27px;left:50%;transform:translateX(-50%);width:38px;height:38px;border-radius:50%;background:#16204e;box-shadow:inset 3px 3px 0 rgba(25,227,255,.3)}
+.cfig.tall{height:162px}
+.crown{position:absolute;left:50%;transform:translateX(-50%);width:26px;height:15px;z-index:5;
+  background:linear-gradient(180deg,#ffe07a,#ffb300);
+  clip-path:polygon(0 100%,0 32%,24% 60%,50% 0,76% 60%,100% 32%,100% 100%);
+  filter:drop-shadow(0 0 8px rgba(255,180,0,.65));animation:crownBob 3.2s ease-in-out infinite}
+.champ:nth-child(1) .crown{top:30px}
+.champ:nth-child(2) .crown{top:16px;animation-delay:.5s}
+@keyframes crownBob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+.cname{position:absolute;top:52%;transform:translateY(-50%);line-height:1.35;white-space:nowrap}
+.cname.left{right:calc(50% + 46px);text-align:right}
+.cname.right{left:calc(50% + 46px);text-align:left}
+/* 白色荧光签名（大花体 + 霓虹描边）· 权重需高于 .cname span */
+.cname .sign{display:block;font-family:'Allura','Great Vibes','Segoe Script','Brush Script MT','Snell Roundhand','Apple Chancery','Lucida Handwriting',cursive;font-weight:400;font-size:38px;line-height:1;
+  color:#fff;letter-spacing:0;transform:rotate(-6deg);margin:0 0 4px;
+  text-shadow:0 0 6px rgba(255,255,255,.95),0 0 14px rgba(25,227,255,.85),0 0 28px rgba(0,179,255,.6);
+  animation:signGlow 3s ease-in-out infinite}
+@keyframes signGlow{0%,100%{text-shadow:0 0 6px rgba(255,255,255,.95),0 0 14px rgba(25,227,255,.85),0 0 28px rgba(0,179,255,.6)}50%{text-shadow:0 0 9px rgba(255,255,255,1),0 0 20px rgba(25,227,255,1),0 0 40px rgba(0,179,255,.8)}}
+.cname b{display:block;font-family:var(--fd);font-weight:400;font-size:13.5px;letter-spacing:1px;color:#fff;text-shadow:0 0 12px rgba(25,227,255,.45)}
+.cname span{display:block;font-size:10px;letter-spacing:1px;color:var(--cyan);margin-top:2px}
+
+/* ===== 三卡片并排 · 卡内文字清空 ===== */
+.cards{flex:1;display:grid;gap:15px;min-height:0}
+.cards.vpre{grid-template-columns:repeat(3,1fr)}
+.cards.vpost{grid-template-columns:repeat(2,1fr)}
+/* 卡片标题区（认证前 · 位于卡片上方） */
+.cards-zone{flex:1;display:flex;flex-direction:column;gap:13px;min-height:0}
+.cards-head{display:grid;grid-template-columns:repeat(3,1fr);gap:15px;flex:none}
+.cards-head.vpost{grid-template-columns:repeat(2,1fr)}
+.chead{display:flex;flex-direction:column;padding:2px 6px 0;animation:cheadIn .55s ease backwards}
+.cards-head .chead:nth-child(1){animation-delay:.32s}
+.cards-head .chead:nth-child(2){animation-delay:.42s}
+.cards-head .chead:nth-child(3){animation-delay:.52s}
+@keyframes cheadIn{from{opacity:0;transform:translateY(10px)}}
+.chead .ct{font-family:'Ma Shan Zheng','ZCOOL QingKe HuangYou',var(--fb);font-size:23px;line-height:1.2;color:#eaf6ff;letter-spacing:2.5px;text-shadow:0 0 14px rgba(25,227,255,.45),0 2px 4px rgba(0,0,0,.45)}
+.chead .ct::after{content:'';display:block;width:28px;height:3px;border-radius:2px;background:linear-gradient(90deg,var(--cyan),transparent);margin-top:6px;box-shadow:0 0 8px rgba(25,227,255,.5)}
+.card{position:relative;border-radius:15px;padding:14px 15px 16px;display:flex;flex-direction:column;min-height:0;
+  background:linear-gradient(164deg,#2f52ad 0%,#223a82 55%,#1b2f6e 100%);
+  border:1px solid rgba(255,255,255,.15);box-shadow:0 12px 28px rgba(0,0,0,.36);
+  transition:transform .28s cubic-bezier(.2,.8,.3,1),box-shadow .28s,border-color .28s;
+  animation:cardIn .6s cubic-bezier(.2,.8,.3,1) backwards}
+.cards .card:nth-child(1){animation-delay:.30s}
+.cards .card:nth-child(2){animation-delay:.42s}
+.cards .card:nth-child(3){animation-delay:.54s}
+@keyframes cardIn{from{opacity:0;transform:translateY(28px)}}
+/* ===== 认证前 · 第三张卡：邀好友得会员（1:1 还原） ===== */
+.card-invite{justify-content:space-between;align-items:stretch;padding:18px 16px 13px;background:radial-gradient(125% 95% at 50% 30%,rgba(92,156,255,.55),rgba(40,90,200,0) 62%),linear-gradient(164deg,#2f52ad 0%,#223a82 55%,#1b2f6e 100%)}
+.inv-card{position:relative;flex:0 0 56%;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 16px;background:linear-gradient(158deg,#fff2c4 0%,#ffe07a 32%,#ffce4d 62%,#f3b211 100%);box-shadow:0 8px 20px rgba(150,95,0,.35),inset 0 2px 0 rgba(255,255,255,.85),inset 0 -4px 10px rgba(190,120,0,.35),inset 0 0 0 2px rgba(255,255,255,.45)}
+.inv-card::before{content:'';position:absolute;inset:0;border-radius:15px;pointer-events:none;background:linear-gradient(108deg,transparent 30%,rgba(255,255,255,.55) 47%,rgba(255,255,255,.12) 55%,transparent 70%);background-size:250% 100%;animation:invShine 3.6s ease-in-out infinite}
+@keyframes invShine{0%{background-position:140% 0}55%,100%{background-position:-40% 0}}
+.inv-max{display:flex;flex-direction:column;align-items:center;font-size:13px;font-weight:800;line-height:1.18;letter-spacing:1px;color:#6b4414}
+.inv-num{font-family:var(--fn);font-size:62px;font-weight:700;line-height:.86;letter-spacing:-1px;color:#5b3a14}
+.inv-unit{align-self:center;font-size:22px;font-weight:800;color:#5b3a14}
+.inv-shield{position:absolute;top:-15px;right:-7px;width:54px;height:60px;z-index:3;display:grid;place-items:center;background:linear-gradient(160deg,#ffe79a,#f0b400);clip-path:polygon(50% 0,100% 17%,100% 58%,50% 100%,0 58%,0 17%);box-shadow:0 4px 12px rgba(170,105,0,.45),inset 0 2px 0 rgba(255,255,255,.7)}
+.inv-tick{width:20px;height:11px;border-left:5px solid #fff;border-bottom:5px solid #fff;transform:rotate(-45deg) translate(2px,-3px);filter:drop-shadow(0 1px 1px rgba(150,90,0,.4))}
+.inv-orbit{position:absolute;top:-7px;right:-22px;width:84px;height:46px;border:2.5px solid rgba(255,214,96,.9);border-radius:50%;transform:rotate(-22deg);z-index:2;box-shadow:0 0 8px rgba(255,200,80,.4)}
+.inv-send{position:absolute;top:-19px;right:27px;width:34px;height:34px;border-radius:50%;z-index:4;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#ff7a5a,#e0241b);color:#fff;font-size:16px;font-weight:800;border:2px solid rgba(255,255,255,.9);box-shadow:0 3px 10px rgba(224,36,27,.55);animation:sendPulse 1.8s ease-in-out infinite}
+@keyframes sendPulse{0%,100%{box-shadow:0 3px 10px rgba(224,36,27,.55)}50%{box-shadow:0 3px 16px rgba(224,36,27,.9)}}
+.inv-line{font-size:17px;font-weight:800;color:#fff;letter-spacing:.5px;text-align:center;text-shadow:0 1px 5px rgba(0,0,0,.35)}
+.inv-line b{color:#c4f23a;font-size:23px;font-weight:800;margin:0 2px;text-shadow:0 0 10px rgba(196,242,58,.5)}
+.inv-foot{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:.2px;text-align:center;line-height:1.5}
+/* ===== 认证前 · 第一张卡：年卡限时特惠 + 笔笔立减（扇形方案） ===== */
+.card-annual{justify-content:flex-start;align-items:stretch;gap:12px;padding:14px 14px 12px;background:radial-gradient(125% 95% at 50% 30%,rgba(92,156,255,.55),rgba(40,90,200,0) 62%),linear-gradient(164deg,#2f52ad 0%,#223a82 55%,#1b2f6e 100%)}
+.an-fan{position:relative;flex:none;height:172px}
+.an-mini{position:absolute;left:50%;bottom:10px;width:76px;height:98px;margin-left:-38px;border-radius:11px;transform-origin:50% 105%;
+  background:linear-gradient(160deg,#8ab6ff 0%,#4a7ae0 60%,#3560c0 100%);border:1.5px solid rgba(255,255,255,.5);
+  box-shadow:0 6px 14px rgba(10,30,90,.45),inset 0 1px 0 rgba(255,255,255,.6);
+  display:flex;align-items:flex-end;justify-content:center;padding-bottom:9px;
+  transform:translateX(var(--tx)) rotate(var(--rt));animation:miniPop .5s ease backwards}
+.an-mini b{font-size:13px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(20,50,140,.6)}
+.an-mini i{position:absolute;top:-7px;right:-6px;font-style:normal;font-size:10px;font-weight:800;color:#fff;background:linear-gradient(135deg,#57d936,#2fae1f);border-radius:7px 7px 7px 0;padding:2px 7px;box-shadow:0 2px 6px rgba(47,174,31,.5)}
+.an-mini.m1{--tx:-74px;--rt:-17deg;z-index:1;animation-delay:.35s}
+.an-mini.m2{--tx:-30px;--rt:-8deg;z-index:2;animation-delay:.42s}
+.an-mini.m3{--tx:46px;--rt:11deg;z-index:2;animation-delay:.49s}
+@keyframes miniPop{from{opacity:0;transform:translateX(var(--tx)) rotate(var(--rt)) translateY(18px) scale(.8)}}
+.an-hero{position:absolute;left:50%;bottom:2px;width:134px;height:156px;margin-left:-67px;z-index:4;transform:rotate(-4deg);transform-origin:50% 100%;border-radius:14px;
+  background:linear-gradient(158deg,#fff4cc 0%,#ffe27e 36%,#ffcf4d 64%,#f3b211 100%);
+  box-shadow:0 12px 26px rgba(150,95,0,.45),inset 0 2px 0 rgba(255,255,255,.85),inset 0 -4px 10px rgba(190,120,0,.35),inset 0 0 0 2.5px rgba(255,255,255,.5);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;overflow:hidden;
+  animation:heroFloat 3.4s ease-in-out infinite}
+@keyframes heroFloat{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(-4deg) translateY(-6px)}}
+.an-hero::after{content:'';position:absolute;inset:0;z-index:2;background:linear-gradient(108deg,transparent 30%,rgba(255,255,255,.5) 47%,rgba(255,255,255,.1) 55%,transparent 70%);background-size:250% 100%;animation:invShine 3.6s ease-in-out infinite;pointer-events:none}
+.an-ribbon{position:absolute;top:9px;right:-16px;transform:rotate(10deg);z-index:5;background:linear-gradient(135deg,#ff8a3d,#e0241b);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:1px;padding:4px 20px;box-shadow:0 3px 9px rgba(224,36,27,.5);animation:ribbonPulse 1.8s ease-in-out infinite}
+@keyframes ribbonPulse{0%,100%{box-shadow:0 3px 9px rgba(224,36,27,.5)}50%{box-shadow:0 3px 16px rgba(224,36,27,.9)}}
+.an-name{font-size:13px;font-weight:800;color:#6b3a14;letter-spacing:1px}
+.an-off{display:flex;align-items:baseline;gap:2px;white-space:nowrap}
+.an-off b{font-family:var(--fn);font-size:38px;font-weight:700;color:#6b3a14;line-height:.85;letter-spacing:-1px}
+.an-off i{font-style:normal;font-size:20px;font-weight:800;color:#6b3a14}
+.an-off em{font-style:normal;font-size:17px;font-weight:900;color:#6b3a14;letter-spacing:1px}
+.an-line{text-align:center;font-size:16px;font-weight:800;color:#fff;letter-spacing:.5px;text-shadow:0 1px 5px rgba(0,0,0,.35)}
+.an-line b{color:#7df23a;font-size:20px;font-weight:900;margin-left:2px;text-shadow:0 0 10px rgba(125,242,58,.55)}
+.an-foot{text-align:center;font-size:10.5px;color:rgba(255,255,255,.5);letter-spacing:.2px}
+/* ===== 认证前 · 第二张卡：拼团季卡 · 阶梯赠时长（实体台阶） ===== */
+.card-team{justify-content:flex-start;align-items:stretch;gap:10px;padding:14px 14px 12px;
+  background:
+    radial-gradient(115% 80% at 50% 36%, rgba(92,160,255,.5), rgba(30,70,180,0) 62%),
+    radial-gradient(circle at 50% 40%, rgba(255,255,255,.06) 1.2px, transparent 1.7px) 0 0/15px 15px,
+    linear-gradient(160deg,#2f63d6 0%,#234fc0 52%,#19379c 100%)}
+.tm-stairs{position:relative;flex:none;height:178px;display:flex;align-items:flex-end;justify-content:center}
+/* 上升虚线轨迹 */
+.tm-trail{position:absolute;left:27%;top:-2px;width:46%;height:72px;z-index:1;opacity:.9}
+/* 台阶（实体块：受光顶面 + 厚重底座） */
+.tm-step{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border-radius:12px 12px 5px 5px;padding:10px 10px 12px}
+.tm-step::before{content:'';position:absolute;top:0;left:0;right:0;height:9px;border-radius:12px 12px 0 0;
+  background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,.06))}
+.tm-step::after{content:'';position:absolute;left:7%;right:7%;bottom:-7px;height:7px;border-radius:0 0 8px 8px;
+  background:rgba(8,18,60,.55);filter:blur(1px)}
+.tm-step.s1{width:44%;height:122px;z-index:2;margin-right:-6px;
+  background:linear-gradient(180deg,#3f6fd9 0%,#2c50b4 58%,#25439e 100%);
+  box-shadow:inset 0 -8px 14px rgba(12,28,86,.42),0 6px 16px rgba(8,20,70,.5);
+  animation:stepUp .55s cubic-bezier(.2,.8,.3,1.2) .35s backwards}
+.tm-step.s2{width:52%;height:160px;z-index:3;
+  background:linear-gradient(180deg,#5b95ff 0%,#3a6ce6 55%,#2d57cc 100%);
+  animation:stepUp .55s cubic-bezier(.2,.8,.3,1.2) .45s backwards, s2glow 2.4s ease-in-out 1s infinite}
+@keyframes stepUp{from{opacity:0;transform:translateY(22px)}}
+@keyframes s2glow{0%,100%{box-shadow:inset 0 -8px 16px rgba(16,36,110,.45),0 0 22px rgba(90,150,255,.4),0 8px 20px rgba(8,20,70,.55)}
+  50%{box-shadow:inset 0 -8px 16px rgba(16,36,110,.45),0 0 34px rgba(125,242,58,.5),0 8px 22px rgba(8,20,70,.6)}}
+/* 头像组（微叠压，差异化配色） */
+.tm-avas{display:flex;margin-bottom:7px}
+.tm-ava{width:24px;height:24px;border-radius:50%;border:2px solid rgba(255,255,255,.85);margin-left:-7px;position:relative;overflow:hidden;background:linear-gradient(160deg,#6a8fe0,#3355b8);box-shadow:0 2px 5px rgba(8,20,70,.4)}
+.tm-ava:first-child{margin-left:0}
+.tm-ava::before{content:'';position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.92)}
+.tm-ava::after{content:'';position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);width:17px;height:11px;border-radius:50% 50% 0 0;background:rgba(255,255,255,.92)}
+.tm-step.s2 .tm-ava{width:26px;height:26px}
+.tm-step.s2 .tm-ava:nth-child(1){background:linear-gradient(160deg,#6fb1ff,#2f7fd6)}
+.tm-step.s2 .tm-ava:nth-child(2){background:linear-gradient(160deg,#8a9bf0,#4a5fc0)}
+.tm-step.s2 .tm-ava:nth-child(3){background:linear-gradient(160deg,#5fd6c0,#2a9a8a)}
+/* 团名 */
+.tm-name{font-size:12.5px;font-weight:800;color:rgba(255,255,255,.85);letter-spacing:1px;margin-bottom:3px}
+.tm-step.s2 .tm-name{color:#fff}
+/* 奖励天数（数字大、+与天小） */
+.tm-days{font-family:var(--fn);font-weight:700;line-height:.9;letter-spacing:-.5px}
+.tm-days i{font-style:normal;font-weight:800}
+.tm-step.s1 .tm-days{font-size:21px;color:#dbe6ff;text-shadow:0 1px 3px rgba(10,25,80,.5)}
+.tm-step.s1 .tm-days i{font-size:12px}
+.tm-step.s2 .tm-days{font-size:30px;color:#7df23a;text-shadow:0 0 14px rgba(125,242,58,.65),0 1px 3px rgba(10,40,10,.5)}
+.tm-step.s2 .tm-days i{font-size:15px}
+/* 轻量季卡芯片（点出"买季卡"的商品 · 金色） */
+.tm-qc{display:inline-flex;align-items:center;gap:4px;margin-top:6px;padding:3px 9px;border-radius:6px;
+  background:linear-gradient(135deg,rgba(255,214,96,.28),rgba(255,190,60,.10));border:1px solid rgba(255,206,80,.65);
+  font-size:10.5px;font-weight:700;color:#ffe9a8;letter-spacing:.5px;box-shadow:0 2px 6px rgba(8,20,70,.35)}
+.tm-qc::before{content:'';width:13px;height:10px;border-radius:2.5px;flex:none;
+  background:linear-gradient(135deg,#ffe07a,#f3b211);box-shadow:0 0 6px rgba(255,190,40,.65)}
+.tm-step.s2 .tm-qc{font-size:11.5px;padding:3px 10px}
+/* 星点 */
+.tm-spark{position:absolute;color:#a5ff6e;font-weight:900;text-shadow:0 0 9px rgba(125,242,58,.8);animation:sparkTw 2.2s ease-in-out infinite;z-index:4}
+.tm-spark.k1{top:4px;right:15%;font-size:13px}
+.tm-spark.k2{top:26px;right:5%;font-size:9px;animation-delay:.7s}
+@keyframes sparkTw{0%,100%{opacity:.35;transform:scale(.8)}50%{opacity:1;transform:scale(1.15)}}
+/* 文案 */
+.tm-line{text-align:center;font-size:16px;font-weight:800;color:#fff;letter-spacing:.5px;text-shadow:0 1px 5px rgba(0,0,0,.35)}
+.tm-line b{color:#7df23a;font-size:22px;font-weight:900;margin:0 2px;text-shadow:0 0 10px rgba(125,242,58,.55)}
+.tm-foot{text-align:center;font-size:10.5px;color:rgba(255,255,255,.5);letter-spacing:.2px}
+/* 认证后（2 列更宽卡片）· 拼团卡内容等比放大适配 */
+.cards.vpost .card-team{padding:12px 16px 10px;gap:8px}
+.cards.vpost .tm-stairs{height:172px}
+.cards.vpost .tm-step.s1{height:122px}
+.cards.vpost .tm-step.s2{height:150px}
+.cards.vpost .tm-ava{width:30px;height:30px;margin-left:-8px}
+.cards.vpost .tm-ava::before{width:11px;height:11px}
+.cards.vpost .tm-ava::after{width:21px;height:14px;bottom:-5px}
+.cards.vpost .tm-step.s2 .tm-ava{width:32px;height:32px}
+.cards.vpost .tm-name{font-size:15px}
+.cards.vpost .tm-step.s1 .tm-days{font-size:26px}
+.cards.vpost .tm-step.s1 .tm-days i{font-size:14px}
+.cards.vpost .tm-step.s2 .tm-days{font-size:38px}
+.cards.vpost .tm-step.s2 .tm-days i{font-size:18px}
+.cards.vpost .tm-qc{font-size:12.5px;padding:4px 11px}
+.cards.vpost .tm-qc::before{width:15px;height:12px}
+.cards.vpost .tm-step.s2 .tm-qc{font-size:13.5px;padding:4px 12px}
+.cards.vpost .tm-line{font-size:21px}
+.cards.vpost .tm-line b{font-size:29px}
+.cards.vpost .tm-foot{font-size:12.5px}
+.cards.vpost .tm-spark.k1{font-size:16px}
+.cards.vpost .tm-spark.k2{font-size:11px}
+/* 认证后 · 邀请卡 v2（顶部描边文案 + 金卡舞台 + 好友头像 + 流程，仿参考图） */
+.cards.vpost .card-invite{padding:0;align-items:stretch;justify-content:flex-start;
+  background:
+    radial-gradient(115% 78% at 50% 44%, rgba(92,160,255,.5), rgba(30,70,180,0) 62%),
+    radial-gradient(circle at 50% 46%, rgba(255,255,255,.07) 1.2px, transparent 1.7px) 0 0/15px 15px,
+    repeating-radial-gradient(circle at 50% 46%, transparent 0 30px, rgba(255,255,255,.05) 30px 32px),
+    linear-gradient(160deg,#2f63d6 0%,#234fc0 52%,#19379c 100%)}
+.inv2{position:relative;z-index:2;display:flex;flex-direction:column;height:100%;padding:20px 20px 15px;gap:12px}
+.inv2-head{display:flex;align-items:baseline;justify-content:center;flex-wrap:nowrap;white-space:nowrap;gap:6px;text-align:center;line-height:1;padding:0 116px 0 8px}
+.inv2-head .t{font-size:18px;font-weight:900;color:#fff;letter-spacing:1px;
+  text-shadow:1.5px 1.5px 0 #a82fcf,-1.5px 1.5px 0 #a82fcf,1.5px -1.5px 0 #a82fcf,-1.5px -1.5px 0 #a82fcf,0 3px 9px rgba(120,20,160,.55)}
+.inv2-head .h15{font-family:var(--fn);font-size:40px;font-weight:700;font-style:italic;color:#ffd23c;line-height:.78;
+  text-shadow:0 2px 0 #c98a00,0 0 18px rgba(255,200,60,.65)}
+.inv2-stage{position:relative;flex:1;display:flex;align-items:center;justify-content:center;min-height:0}
+.inv2-card{position:relative;width:53%;max-width:300px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+  padding:48px 18px 26px;background:linear-gradient(150deg,#fff4cc 0%,#ffe27e 38%,#ffcf4d 66%,#f3b211 100%);
+  box-shadow:0 12px 28px rgba(150,95,0,.42),inset 0 2px 0 rgba(255,255,255,.85),inset 0 -5px 12px rgba(190,120,0,.35),inset 0 0 0 3px rgba(255,255,255,.5);overflow:hidden}
+.inv2-card::before{content:'';position:absolute;inset:0;background:linear-gradient(115deg,rgba(255,255,255,.55) 0 36%,rgba(255,255,255,0) 52%);pointer-events:none}
+.inv2-card::after{content:'';position:absolute;inset:0;z-index:2;background:linear-gradient(108deg,transparent 30%,rgba(255,255,255,.5) 47%,rgba(255,255,255,.1) 55%,transparent 70%);background-size:250% 100%;animation:invShine 3.6s ease-in-out infinite;pointer-events:none}
+.inv2-tag{position:absolute;top:14px;left:14px;z-index:4;background:linear-gradient(135deg,#7a4a14,#573210);color:#fff;font-size:14px;font-weight:800;letter-spacing:1px;padding:6px 15px;border-radius:11px 11px 11px 2px;box-shadow:0 3px 8px rgba(90,50,0,.4)}
+.inv2-cat{position:absolute;right:-4px;bottom:-2px;width:46%;height:auto;z-index:1;opacity:.55}
+.inv2-mid{position:relative;z-index:3;display:flex;align-items:baseline;gap:5px}
+.inv2-max{font-size:18px;font-weight:800;color:#6b3a14;letter-spacing:1px}
+.inv2-num{font-family:var(--fn);font-size:64px;font-weight:700;line-height:.78;color:#573210;letter-spacing:-2px}
+.inv2-unit{font-size:24px;font-weight:800;color:#573210}
+.inv2-friend{position:absolute;display:flex;flex-direction:column;align-items:center;z-index:3;animation:frPop .5s ease backwards}
+.inv2-friend.f1{left:1%;top:12%;animation-delay:.5s}
+.inv2-friend.f2{left:4%;bottom:8%;animation-delay:.62s}
+.inv2-friend.f3{right:2%;top:16%;animation-delay:.56s}
+.inv2-friend.f4{right:0%;bottom:14%;animation-delay:.68s}
+@keyframes frPop{from{opacity:0;transform:scale(.5)}}
+.inv2-friend .plus{font-size:13px;font-weight:800;color:#9bf23a;text-shadow:0 1px 3px rgba(0,0,0,.45);margin-bottom:4px}
+.inv2-friend .ava{width:44px;height:44px;border-radius:50%;border:2.5px solid #fff;box-shadow:0 3px 9px rgba(0,0,0,.35);position:relative;overflow:hidden}
+.inv2-friend .ava::before{content:'';position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);width:17px;height:17px;border-radius:50%;background:rgba(255,255,255,.92)}
+.inv2-friend .ava::after{content:'';position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);width:32px;height:22px;border-radius:50% 50% 0 0;background:rgba(255,255,255,.92)}
+.inv2-friend.f1 .ava{background:linear-gradient(160deg,#3a4a6a,#1c2740)}
+.inv2-friend.f2 .ava{background:linear-gradient(160deg,#5aa0d6,#2a6aa8)}
+.inv2-friend.f3 .ava{background:linear-gradient(160deg,#4a4a5e,#26263a)}
+.inv2-friend.f4 .ava{background:linear-gradient(160deg,#e2e2ec,#b4b4c8)}
+.inv2-foot{font-size:12.5px;color:rgba(255,255,255,.6);text-align:center;letter-spacing:.3px;line-height:1.5}
+/* 右上角盾牌/轨道/送角标（半探出卡片外，收在标题右侧空区，不遮挡标题） */
+.cards.vpost .inv-orbit{top:-10px;right:6px;width:96px;height:54px;z-index:8}
+.cards.vpost .inv-shield{top:-16px;right:24px;width:64px;height:72px;z-index:9}
+.cards.vpost .inv-tick{width:24px;height:13px;border-left-width:6px;border-bottom-width:6px}
+.cards.vpost .inv-send{top:-22px;right:78px;width:38px;height:38px;font-size:18px;z-index:10}
+.card:hover{transform:translateY(-7px);border-color:rgba(25,227,255,.55);box-shadow:0 24px 50px rgba(0,0,0,.5),0 0 32px rgba(25,227,255,.18)}
+.card::before{content:'';position:absolute;inset:0;border-radius:15px;pointer-events:none;background:linear-gradient(180deg,rgba(255,255,255,.06),transparent 24%)}
+/* 卡顶：欢呼小人剪影 + 标题占位条 */
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.cheer{display:flex;align-items:flex-end;gap:5px;flex:none;height:26px}
+.cheer .ppl{position:relative;width:13px;border-radius:7px 7px 0 0;background:rgba(255,255,255,.5)}
+.cheer .ppl::before{content:'';position:absolute;top:-9px;left:50%;transform:translateX(-50%);width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.5)}
+.cheer .ppl:nth-child(1){height:16px;background:var(--red)}.cheer .ppl:nth-child(1)::before{background:var(--red)}
+.cheer .ppl:nth-child(2){height:24px;background:var(--cyan);animation:jump 1.4s ease-in-out infinite}.cheer .ppl:nth-child(2)::before{background:var(--cyan)}
+.cheer .ppl:nth-child(3){height:14px;background:var(--gold2)}.cheer .ppl:nth-child(3)::before{background:var(--gold2)}
+@keyframes jump{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.ph{display:block;border-radius:6px}
+.ph.t{height:15px;width:60%;background:rgba(255,255,255,.22)}
+/* 黄色会员卡造型（文字清空 → 占位条） */
+.membercard{flex:none;height:128px;border-radius:13px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,var(--gold1) 0%,#ffce4d 52%,var(--gold2) 100%);
+  padding:16px 16px;display:flex;flex-direction:column;justify-content:space-between;
+  box-shadow:0 7px 18px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.5)}
+.membercard::after{content:'';position:absolute;top:-50%;left:-40%;width:46%;height:200%;background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);transform:rotate(8deg);animation:shine 4.6s ease-in-out infinite}
+@keyframes shine{0%,62%,100%{left:-50%}31%{left:120%}}
+.membercard .ph{background:rgba(122,74,0,.30)}
+.membercard .m1{height:15px;width:42%}
+.membercard .m2{height:26px;width:60%}
+.membercard .wave{position:absolute;right:0;bottom:0;width:55%;height:60%;background:rgba(255,255,255,.22);border-radius:60% 0 0 0;clip-path:polygon(40% 0,100% 0,100% 100%,0 100%)}
+/* 角标图形（文字清空，仅形状） */
+.mark{position:absolute;top:-12px;right:-8px;z-index:4}
+.badge{width:74px;height:74px;background:linear-gradient(135deg,#ff7a4d,#e53935);
+  clip-path:polygon(50% 0,62% 26%,90% 10%,74% 38%,100% 50%,74% 62%,90% 90%,62% 74%,50% 100%,38% 74%,10% 90%,26% 62%,0 50%,26% 38%,10% 10%,38% 26%);
+  filter:drop-shadow(0 5px 11px rgba(229,57,53,.55));display:grid;place-items:center;
+  animation:pop .5s .8s cubic-bezier(.2,.8,.3,1.5) backwards}
+@keyframes pop{from{transform:scale(0) rotate(-30deg)}}
+.badge .ph{background:rgba(255,255,255,.85);height:8px;width:30px}
+.shield{width:62px;height:70px;background:linear-gradient(135deg,#ffe79a,#f0b400);
+  clip-path:polygon(50% 0,100% 18%,100% 60%,50% 100%,0 60%,0 18%);
+  filter:drop-shadow(0 5px 11px rgba(240,180,0,.5));display:grid;place-items:center;position:relative;
+  animation:pop .5s .9s cubic-bezier(.2,.8,.3,1.5) backwards}
+.shield .tick{width:22px;height:11px;border-left:5px solid #fff;border-bottom:5px solid #fff;transform:rotate(-45deg) translate(2px,-2px)}
+.shield .send{position:absolute;top:-6px;left:-10px;width:30px;height:30px;border-radius:50%;background:var(--red);border:2px solid #fff;display:grid;place-items:center;box-shadow:0 3px 8px rgba(229,57,53,.5)}
+.shield .send .ph{background:rgba(255,255,255,.9);width:13px;height:6px}
+.gift{width:64px;height:64px;position:relative;filter:drop-shadow(0 5px 11px rgba(0,179,255,.5));animation:pop .5s 1s cubic-bezier(.2,.8,.3,1.5) backwards}
+.gift .box{position:absolute;bottom:0;left:6px;width:52px;height:40px;border-radius:8px;background:linear-gradient(135deg,var(--electric),#0090ff)}
+.gift .box::before{content:'';position:absolute;left:50%;top:0;bottom:0;width:8px;transform:translateX(-50%);background:rgba(255,255,255,.5)}
+.gift .box::after{content:'';position:absolute;left:0;right:0;top:46%;height:8px;background:rgba(255,255,255,.5)}
+.gift .bow{position:absolute;top:2px;left:50%;transform:translateX(-50%);width:30px;height:18px;border-radius:50%;background:var(--cyan);box-shadow:-12px 2px 0 -3px var(--cyan),12px 2px 0 -3px var(--cyan)}
+/* 卡底文案占位 */
+.card-foot{margin-top:auto;display:flex;flex-direction:column;gap:9px;padding-top:13px}
+.ph.p1{height:16px;width:84%;background:rgba(255,255,255,.24)}
+.ph.p2{height:9px;width:96%;background:rgba(255,255,255,.11)}
+
+/* ===== 右侧认证栏 ===== */
+.auth{width:258px;flex:none;display:flex;flex-direction:column;align-items:center;gap:12px;
+  padding:24px 17px 18px;
+  animation:cardIn .6s .55s cubic-bezier(.2,.8,.3,1) backwards}
+.avatar{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#ff8a65,#e53935);border:3px solid rgba(255,255,255,.28);position:relative;box-shadow:0 7px 18px rgba(0,0,0,.38);margin-top:auto}
+.avatar::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:46px;height:24px;border-radius:24px 24px 0 0;background:#e53935}
+.avatar::after{content:'B';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:24px;color:#fff;padding-top:8px}
+.auth-tag{height:25px;padding:0 14px;border-radius:99px;display:flex;align-items:center;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.13);font-size:12.5px;color:var(--mut)}
+.phone{font-size:20px;font-weight:700;letter-spacing:1.5px}
+.qr-box{width:100%;background:#fff;border-radius:13px;padding:11px 11px 13px;display:flex;flex-direction:column;align-items:center;gap:9px;box-shadow:0 9px 22px rgba(0,0,0,.36)}
+.qr-title{font-size:12.5px;color:#555;font-weight:600}
+.qr{width:138px;height:138px;border-radius:8px;position:relative;overflow:hidden;
+  background:radial-gradient(circle,#16234f 1.4px,transparent 1.7px) 0 0/9px 9px,#fff}
+.qr .corner{position:absolute;width:26px;height:26px;border:5px solid #16234f;border-radius:4px}
+.qr .corner::after{content:'';position:absolute;inset:4px;background:#16234f;border-radius:2px}
+.qr .corner.tl{top:6px;left:6px}.qr .corner.tr{top:6px;right:6px}.qr .corner.bl{bottom:6px;left:6px}
+.qr .center{position:absolute;inset:42px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),var(--blue));box-shadow:0 0 0 5px #fff;display:grid;place-items:center}
+.qr .center::after{content:'';width:18px;height:14px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#fff}
+.qr .mp{position:absolute;right:8px;bottom:8px;width:22px;height:22px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #fff}
+.qr .scan{position:absolute;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);box-shadow:0 0 13px var(--cyan);animation:scan 2.5s ease-in-out infinite}
+@keyframes scan{0%,100%{top:5%}50%{top:91%}}
+.verify{width:100%;height:42px;border:none;border-radius:99px;cursor:pointer;
+  background:linear-gradient(135deg,var(--cyan),var(--blue));color:#fff;font-size:15.5px;font-weight:700;letter-spacing:2px;font-family:var(--fb);
+  box-shadow:0 7px 20px rgba(25,227,255,.42);transition:all .22s;animation:vpulse 2.6s ease-in-out infinite}
+@keyframes vpulse{0%,100%{box-shadow:0 7px 20px rgba(25,227,255,.42)}50%{box-shadow:0 7px 30px rgba(25,227,255,.7)}}
+.verify:hover{transform:translateY(-2px)}
+.auth-note{font-size:11.5px;color:rgba(255,255,255,.42);text-align:center;line-height:1.5}
+
+/* ===== 页面舞台与切换 ===== */
+.stage{flex:1;position:relative;min-height:0;overflow:hidden}
+.deco{transition:opacity .45s ease}
+/* 顶栏随充值页切换为暖棕金主题 */
+.device.theme-recharge .titlebar{background:#241a10;border-bottom-color:transparent}
+.device.theme-recharge .back{background:rgba(255,200,120,.08);border-color:rgba(255,200,120,.15);color:#dcbd90}
+.device.theme-recharge .back:hover{background:rgba(255,200,120,.16);color:#ffe3b8}
+.device.theme-recharge .action{background:rgba(255,200,120,.07);border-color:rgba(255,200,120,.13);color:#dcbd90}
+.device.theme-recharge .action:hover{background:rgba(255,200,120,.15);color:#ffe3b8}
+.device.theme-recharge .tab{color:rgba(255,222,175,.42)}
+.device.theme-recharge .tab:hover{color:#ffe0b0}
+.device.theme-recharge .tab.on{color:#ffb347}
+.device.theme-recharge .tab.on::after{background:#ffb347;box-shadow:0 0 9px rgba(255,179,71,.7)}
+.device.theme-recharge .deco{opacity:0}
+.page{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity .42s ease,visibility .42s;overflow:hidden}
+.page.active{opacity:1;visibility:visible}
+.page-promo{background:
+  radial-gradient(820px 520px at 90% -14%,rgba(0,179,255,.34),transparent 60%),
+  radial-gradient(700px 460px at -6% 116%,rgba(41,121,255,.26),transparent 60%),
+  radial-gradient(560px 380px at 50% 8%,rgba(25,227,255,.10),transparent 60%),
+  linear-gradient(160deg,#1c2a63 0%,#131c44 48%,#0c1230 100%)}
+.page-promo .content{height:100%}
+
+/* ===== 充值页 ===== */
+.page-recharge{background:
+  radial-gradient(720px 500px at 88% -12%,rgba(255,150,40,.16),transparent 60%),
+  radial-gradient(620px 440px at 8% 112%,rgba(120,70,20,.20),transparent 60%),
+  linear-gradient(160deg,#241a10 0%,#191209 52%,#100b06 100%)}
+.rch-wm{position:absolute;right:-46px;top:-34px;width:330px;height:330px;opacity:.05;transform:rotate(14deg);pointer-events:none;border:14px solid #ffcf8a;border-radius:78px}
+.rch-wm::before,.rch-wm::after{content:'';position:absolute;top:-44px;width:0;height:0;border-left:44px solid transparent;border-right:44px solid transparent;border-bottom:62px solid #ffcf8a}
+.rch-wm::before{left:18px;transform:rotate(-12deg)}
+.rch-wm::after{right:18px;transform:rotate(12deg)}
+.rch{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;gap:14px;padding:16px 22px 18px;animation:rchIn .5s ease backwards}
+@keyframes rchIn{from{opacity:0;transform:translateY(10px)}}
+.rch-head{display:flex;align-items:center;gap:16px}
+.u-ava{width:58px;height:58px;border-radius:50%;flex:none;background:linear-gradient(135deg,#ff8a65,#e53935);border:3px solid rgba(255,255,255,.25);position:relative;box-shadow:0 6px 16px rgba(0,0,0,.4)}
+.u-ava::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:42px;height:22px;border-radius:22px 22px 0 0;background:#e53935}
+.u-ava::after{content:'B';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:22px;color:#fff;padding-top:7px}
+.u-info{display:flex;flex-direction:column;gap:7px}
+.u-row1{display:flex;align-items:center;gap:12px}
+.u-phone{font-size:23px;font-weight:800;letter-spacing:1px;color:#fff}
+.u-real{display:inline-flex;align-items:center;gap:5px;height:21px;padding:0 10px;border-radius:6px;background:rgba(46,200,120,.16);border:1px solid rgba(46,200,120,.5);color:#3ddc84;font-size:11.5px;font-weight:700}
+.u-stu{display:inline-flex;align-items:center;height:21px;padding:0 10px;border-radius:6px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:rgba(255,255,255,.55);font-size:11.5px;font-weight:600}
+.u-id{font-size:12px;color:rgba(255,255,255,.4)}
+.u-row2{display:flex;align-items:center;gap:7px;font-size:13px;color:#e7b873}
+.u-row2 .gem{width:14px;height:14px;background:linear-gradient(135deg,#ffe07a,#ff9e29);clip-path:polygon(50% 0,100% 38%,82% 100%,18% 100%,0 38%);flex:none}
+.u-row2 b{color:#ffd98a;font-weight:700}
+.rch-body{flex:1;display:flex;gap:26px;min-height:0;align-items:center;justify-content:flex-start}
+.rch-panel{flex:1;position:relative;background:linear-gradient(180deg,#fffdf8,#fbf3e2);border-radius:16px;padding:26px 24px 26px;display:flex;flex-direction:column;box-shadow:0 18px 44px rgba(0,0,0,.4);min-width:0}
+/* ===== 认证后右上角 banner：邀好友得会员 ===== */
+.promo-banner{position:absolute;top:14px;right:18px;z-index:6;height:50px;width:300px;border-radius:999px;
+  display:flex;align-items:center;padding-left:96px;padding-right:6px;gap:10px;cursor:pointer;overflow:hidden;
+  background:linear-gradient(102deg,#0c3358 0%,#1769ad 52%,#0f5493 100%);
+  box-shadow:0 8px 20px rgba(8,40,80,.45),inset 0 1px 0 rgba(255,255,255,.18),inset 0 -2px 6px rgba(0,0,0,.25);
+  transition:transform .2s ease,box-shadow .2s ease,filter .2s ease;
+  animation:bannerIn .5s cubic-bezier(.2,.8,.3,1.2) backwards}
+@keyframes bannerIn{from{opacity:0;transform:translateX(22px) scale(.9)}}
+.promo-banner::before{content:'';position:absolute;top:2px;left:90px;right:8px;height:42%;border-radius:999px;
+  background:linear-gradient(180deg,rgba(255,255,255,.20),transparent);pointer-events:none}
+.promo-banner:hover{transform:translateY(-2px);box-shadow:0 13px 28px rgba(8,40,80,.55),inset 0 1px 0 rgba(255,255,255,.26);filter:brightness(1.07)}
+.promo-banner:active{transform:translateY(0) scale(.98)}
+.pb-art{position:absolute;left:0;top:0;height:100%;width:94px}
+.pb-txt{position:relative;font-size:16px;font-weight:800;color:#fff;letter-spacing:1px;white-space:nowrap;text-shadow:0 1px 4px rgba(0,0,0,.35)}
+.pb-go{position:relative;flex:none;height:30px;padding:0 10px;border-radius:999px;display:flex;align-items:center;
+  background:linear-gradient(135deg,#ffe07a,#ffc23c);color:#7a4a00;font-size:13px;font-weight:800;letter-spacing:.5px;
+  box-shadow:0 3px 8px rgba(255,170,0,.4),inset 0 1px 0 rgba(255,255,255,.6);transition:transform .18s ease}
+.promo-banner:hover .pb-go{transform:scale(1.07)}
+/* 青色质感变体（选中 90 天卡时） */
+.promo-banner.cyan{background:linear-gradient(102deg,#065f6b 0%,#0d9aa8 52%,#0a7f8c 100%);
+  box-shadow:0 8px 20px rgba(6,70,80,.45),inset 0 1px 0 rgba(255,255,255,.20),inset 0 -2px 6px rgba(0,0,0,.25)}
+.promo-banner.cyan:hover{box-shadow:0 13px 28px rgba(6,70,80,.55),inset 0 1px 0 rgba(255,255,255,.28),inset 0 -2px 6px rgba(0,0,0,.25)}
+.rp-title{display:flex;align-items:baseline;gap:12px;margin-bottom:18px}
+.rp-title b{font-family:var(--fb);font-weight:900;font-size:24px;letter-spacing:1px;color:#a8431a}
+.rp-title span{font-size:12.5px;color:#9a8a6a}
+.rp-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:13px}
+.rp-cards.vpost{grid-template-columns:repeat(4,1fr)}
+.price{position:relative;border-radius:13px;padding:84px 8px 64px;display:flex;flex-direction:column;align-items:center;gap:16px;cursor:pointer;
+  background:linear-gradient(180deg,#fbf1da,#f3e3c2);border:1.5px solid transparent;
+  transition:transform .2s ease,box-shadow .2s ease,background .25s ease,border-color .2s ease}
+.price:hover{transform:translateY(-3px);box-shadow:0 8px 18px rgba(120,80,20,.18)}
+.price .rec{position:absolute;top:9px;left:9px;font-size:13px;font-weight:800;color:#a8431a;background:linear-gradient(135deg,#ffe07a,#ffc23c);border-radius:7px 7px 7px 0;padding:4px 12px;box-shadow:0 3px 9px rgba(255,170,0,.45)}
+.price .save{position:absolute;top:9px;left:9px;font-size:13px;font-weight:800;color:#8a5a00;background:linear-gradient(135deg,#ffe07a,#ffc23c);border-radius:7px 7px 7px 0;padding:4px 12px;box-shadow:0 3px 9px rgba(255,170,0,.45)}
+.price .hot{position:absolute;top:9px;left:9px;font-size:13px;font-weight:800;color:#fff;background:linear-gradient(135deg,#ff4fa0,#e0197e);border-radius:7px 7px 7px 0;padding:4px 12px;box-shadow:0 3px 10px rgba(224,25,126,.5);animation:hotPulse 1.8s ease-in-out infinite}
+@keyframes hotPulse{0%,100%{box-shadow:0 3px 10px rgba(224,25,126,.5)}50%{box-shadow:0 3px 16px rgba(224,25,126,.85)}}
+.price .pname{font-size:15px;font-weight:800;color:#a8431a;letter-spacing:.5px}
+.price .pprice{display:flex;align-items:baseline;gap:2px;color:#a8431a}
+.price .pprice .y{font-size:17px;font-weight:700}
+.price .pprice .n{font-family:var(--fn);font-size:42px;font-weight:700;line-height:1}
+.price .punit{font-size:12px;color:#b08a5a}
+.price.sel{background:linear-gradient(165deg,#ffd7e1 0%,#ffe2b0 55%,#ffd27a 100%);border-color:#ff9e29;box-shadow:0 10px 26px rgba(255,150,40,.35),inset 0 1px 0 rgba(255,255,255,.7)}
+.price.sel .pname,.price.sel .pprice,.price.sel .pprice .y{color:#9a3412}
+/* 365 天主推卡 · 火热选中态（更突出、更有购买欲） */
+.price.hotcard{overflow:hidden}
+.price.hotcard.sel{transform:translateY(-6px) scale(1.035);border-color:#ffcf6b;
+  background:
+    radial-gradient(130% 100% at 15% -5%, rgba(255,225,130,.65), transparent 52%),
+    radial-gradient(150% 130% at 88% 108%, rgba(150,8,45,.6), transparent 58%),
+    linear-gradient(158deg,#ffbe55 0%,#ff8a2e 28%,#f5472a 58%,#c11a1a 100%);
+  box-shadow:0 16px 38px rgba(255,90,30,.5),0 0 0 2px rgba(255,190,80,.55),inset 0 1px 0 rgba(255,255,255,.35);
+  animation:hotGlow 2.2s ease-in-out infinite}
+.price.hotcard.sel:hover{transform:translateY(-8px) scale(1.045)}
+@keyframes hotGlow{0%,100%{box-shadow:0 16px 38px rgba(255,90,30,.5),0 0 0 2px rgba(255,190,80,.55),inset 0 1px 0 rgba(255,255,255,.35)}
+  50%{box-shadow:0 18px 46px rgba(255,90,30,.72),0 0 0 3px rgba(255,210,110,.8),0 0 30px rgba(255,140,40,.55),inset 0 1px 0 rgba(255,255,255,.35)}}
+.price.hotcard.sel .pname,.price.hotcard.sel .pprice,.price.hotcard.sel .pprice .y,.price.hotcard.sel .old{color:#fff;text-shadow:0 1px 6px rgba(140,20,0,.5)}
+.price.hotcard.sel::after{content:'';position:absolute;top:-60%;left:-70%;width:45%;height:220%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);transform:rotate(12deg);
+  animation:hotShine 2.6s ease-in-out infinite;pointer-events:none}
+@keyframes hotShine{0%{left:-70%}55%,100%{left:130%}}
+.rp-note{display:flex;align-items:center;gap:5px;font-size:12px;color:#a99878;margin-top:8px}
+.rp-note .i{width:13px;height:13px;border-radius:50%;border:1px solid #c9b48e;color:#c9b48e;font-size:9px;display:inline-flex;align-items:center;justify-content:center;font-style:normal}
+.rp-perks{margin-top:20px;display:flex;justify-content:space-between;gap:8px;background:linear-gradient(180deg,#fdf4e0,#f7ead0);border:1px solid #efdcb4;border-radius:12px;padding:8px 16px}
+.perk{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#8a5a2a;font-weight:600}
+.perk .pi{width:24px;height:24px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:12px;background:#fbe6c4}
+.rch-side{width:208px;flex:none;display:flex;flex-direction:column;align-items:center;gap:14px;justify-content:center;padding-bottom:6px}
+.rs-price{display:flex;align-items:baseline;gap:3px;color:#ffcf6b;text-shadow:0 0 22px rgba(255,170,40,.45);transition:transform .2s ease}
+.rs-price.bump{animation:bump .3s ease}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.rs-price .y{font-size:26px;font-weight:700}
+.rs-price .n{font-family:var(--fn);font-size:60px;font-weight:700;line-height:1}
+.rs-coupon{width:100%;height:38px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;padding:0 14px;font-size:12.5px;color:rgba(255,255,255,.4)}
+.rs-qr{width:150px;height:150px;background:#fff;border-radius:12px;padding:6px;box-shadow:0 10px 26px rgba(0,0,0,.45)}
+.rs-pay{display:flex;align-items:center;gap:8px;font-size:13px;color:#fff;font-weight:600}
+.rs-pay .wx,.rs-pay .ali{width:22px;height:22px;border-radius:6px;display:grid;place-items:center;font-size:11px;color:#fff;font-weight:700}
+.rs-pay .wx{background:#1aad19}.rs-pay .ali{background:#1677ff}
+.rs-agree{font-size:11.5px;color:rgba(255,255,255,.4)}
+.rs-agree a{color:#e7b873;text-decoration:none}
+
+/* ===== 状态切换器 ===== */
+.switcher{margin-top:22px;display:inline-flex;align-items:center;gap:14px;padding:9px 12px 9px 20px;border-radius:99px;
+  background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.10);z-index:1;user-select:none}
+.switcher .sw-label{font-size:12.5px;letter-spacing:1px;color:rgba(255,255,255,.45)}
+.switcher .sw-state{font-size:13px;font-weight:700;letter-spacing:1px;color:#8fd8ff;transition:color .3s}
+.device.authed .switcher .sw-state{color:#7de8b0}
+.switcher .sw-btn{width:52px;height:27px;border-radius:99px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);position:relative;cursor:pointer;transition:background .3s,border-color .3s}
+.switcher .sw-btn::after{content:'';position:absolute;top:2px;left:2px;width:21px;height:21px;border-radius:50%;background:#fff;box-shadow:0 2px 6px rgba(0,0,0,.4);transition:transform .3s cubic-bezier(.3,.8,.3,1.2),background .3s}
+.device.authed .switcher .sw-btn{background:linear-gradient(135deg,#19e3ff,#2979ff);border-color:rgba(25,227,255,.5)}
+.device.authed .switcher .sw-btn::after{transform:translateX(25px)}
+.switcher .sw-btn:hover{border-color:rgba(25,227,255,.6)}
+
+/* ===== 价格卡（认证后） ===== */
+.price .old{font-size:12px;color:#b9a283;text-decoration:line-through;letter-spacing:.5px}
+.price .old::before{content:'¥'}
+
+/* ===== 认证徽章 ===== */
+.vbadge{display:inline-flex;align-items:center;gap:5px;height:21px;padding:0 10px;border-radius:6px;background:rgba(46,200,120,.16);border:1px solid rgba(46,200,120,.5);color:#3ddc84;font-size:11.5px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="device">
+  <div class="deco">
+    <span class="ribbon"></span>
+    <span class="confetti c1"></span><span class="confetti c2"></span><span class="confetti c3"></span><span class="confetti c4"></span>
+    <span class="star s1"></span><span class="star s2"></span>
+    <span class="orb o1"></span><span class="orb o2"></span>
+  </div>
+
+  <!-- 顶栏 -->
+  <div class="titlebar">
+    <span class="back">‹ 返回</span>
+    <div class="tabs">
+      <span class="tab" data-page="recharge">会员充值</span>
+      <span class="tab on" data-page="promo">大学生优惠</span>
+    </div>
+    <div class="actions">
+      <span class="action">时长明细</span><span class="action">优惠券</span>
+      <span class="action">我的奖品</span><span class="action">我的订单</span>
+    </div>
+  </div>
+
+  <div class="stage">
+  <div class="page page-promo active">
+  <div class="content">
+    <div class="main">
+
+      <!-- Banner -->
+      <div class="banner">
+        <span class="glow g1"></span><span class="glow g2"></span>
+        <span class="streak s1"></span><span class="streak s2"></span><span class="streak s3"></span>
+        <span class="gridfloor"></span><span class="flowline"></span>
+        <div class="banner-copy">
+          <div class="tagline">
+            <span class="tag-merged">惊喜开学季<i>·</i>大学生专属特权已就位</span>
+          </div>
+          <h1>回归主场<br>打出冠军</h1>
+        </div>
+        <div class="crew">
+          <span class="fig b1"></span><span class="fig b2"></span>
+        </div>
+        <!-- 宿舍四人开黑欢呼（简化风格化插画） -->
+        <svg class="dorm" viewBox="0 0 360 240" aria-hidden="true">
+          <defs>
+            <radialGradient id="dglow" cx="50%" cy="42%" r="58%">
+              <stop offset="0" stop-color="#3d5bff" stop-opacity=".38"/>
+              <stop offset=".55" stop-color="#2a3fae" stop-opacity=".16"/>
+              <stop offset="1" stop-color="#2a3fae" stop-opacity="0"/>
+            </radialGradient>
+            <linearGradient id="dscr" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#8fd8ff"/><stop offset="1" stop-color="#3f7dff"/>
+            </linearGradient>
+          </defs>
+          <ellipse cx="180" cy="128" rx="172" ry="112" fill="url(#dglow)"/>
+          <ellipse cx="180" cy="226" rx="150" ry="13" fill="#0a1233" opacity=".55"/>
+          <!-- 后排两人 -->
+          <g class="d-back d-b1">
+            <circle cx="128" cy="92" r="15" fill="#f0c9a0"/>
+            <path d="M114 90 a15 15 0 0 1 28 0 l-4 3 -20 0 z" fill="#2c3550"/>
+            <path d="M110 150 C110 118 146 118 146 150 Z" fill="#5aa0d6"/>
+            <path d="M112 128 C100 116 96 102 98 90" stroke="#5aa0d6" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <circle cx="98" cy="86" r="5.5" fill="#f0c9a0"/>
+          </g>
+          <g class="d-back d-b2">
+            <circle cx="234" cy="88" r="15" fill="#f6d2ab"/>
+            <path d="M220 86 a15 15 0 0 1 28 0 l-4 3 -20 0 z" fill="#3a2f4d"/>
+            <path d="M216 148 C216 116 252 116 252 148 Z" fill="#e8b04b"/>
+            <path d="M250 126 C262 114 266 100 264 88" stroke="#e8b04b" stroke-width="9" fill="none" stroke-linecap="round"/>
+            <circle cx="264" cy="84" r="5.5" fill="#f6d2ab"/>
+          </g>
+          <!-- 中景显示器 -->
+          <g class="d-monitor">
+            <rect x="138" y="148" width="84" height="54" rx="5" fill="#0d1638" stroke="#3f7dff" stroke-width="2"/>
+            <rect x="143" y="153" width="74" height="44" rx="3" fill="url(#dscr)" opacity=".92"/>
+            <path d="M150 188 l12-14 9 8 14-18 12 12 10-8" stroke="#fff" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity=".85"/>
+            <rect x="170" y="202" width="20" height="7" fill="#0d1638"/>
+            <rect x="158" y="209" width="44" height="5" rx="2.5" fill="#0d1638"/>
+          </g>
+          <!-- 前景左：戴耳机举拳白衣男 -->
+          <g class="d-front d-f1">
+            <circle cx="112" cy="146" r="17" fill="#f3cba2"/>
+            <path d="M94 142 a18 18 0 0 1 36 0" stroke="#232b48" stroke-width="6" fill="none"/>
+            <rect x="90" y="138" width="8" height="15" rx="4" fill="#232b48"/>
+            <rect x="126" y="138" width="8" height="15" rx="4" fill="#232b48"/>
+            <path d="M90 212 C90 172 134 172 134 212 Z" fill="#eef3ff"/>
+            <path d="M96 186 C84 172 80 156 84 142" stroke="#eef3ff" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <circle cx="84" cy="136" r="7.5" fill="#f3cba2"/>
+          </g>
+          <!-- 前景右：绿衣举拳男 -->
+          <g class="d-front d-f2">
+            <circle cx="250" cy="142" r="17" fill="#f6d2ab"/>
+            <path d="M236 138 a15 15 0 0 1 28 0 l-4 4 -20 0 z" fill="#2c3550"/>
+            <path d="M228 212 C228 172 272 172 272 212 Z" fill="#3fae7e"/>
+            <path d="M268 184 C280 170 284 154 280 140" stroke="#3fae7e" stroke-width="11" fill="none" stroke-linecap="round"/>
+            <circle cx="280" cy="134" r="7.5" fill="#f6d2ab"/>
+          </g>
+          <!-- 欢呼星点 -->
+          <g class="d-spark" fill="#7df0ff">
+            <path d="M70 108 l3 7 7 3 -7 3 -3 7 -3 -7 -7 -3 7 -3 z" opacity=".9"/>
+            <path d="M296 100 l2.5 6 6 2.5 -6 2.5 -2.5 6 -2.5 -6 -6 -2.5 6 -2.5 z" opacity=".8"/>
+            <path d="M180 62 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z" opacity=".7"/>
+          </g>
+        </svg>
+      </div>
+
+      <!-- 卡片 · 认证前 3 张（带标题）/ 认证后 2 张 -->
+      <div class="cards-zone vpre">
+        <div class="cards-head">
+          <div class="chead"><span class="ct">这一局，不能掉队</span></div>
+          <div class="chead"><span class="ct">携兄弟，拼出冠军</span></div>
+          <div class="chead"><span class="ct">好友到齐，才算数</span></div>
+        </div>
+        <div class="cards vpre">
+          <div class="card card-annual">
+            <div class="an-fan">
+              <span class="an-mini m1"><i>减¥11</i><b>30天</b></span>
+              <span class="an-mini m2"><i>减¥29</i><b>90天</b></span>
+              <span class="an-mini m3"><i>减¥57</i><b>180天</b></span>
+              <div class="an-hero">
+                <span class="an-ribbon">限时特惠</span>
+                <span class="an-name">年卡 · 365天</span>
+                <span class="an-off"><i>立减</i><b>100</b><em>元</em></span>
+              </div>
+            </div>
+            <div class="an-line">认证秒过秒得，<b>笔笔立减</b></div>
+            <div class="an-foot">*扫码认证后自动发放，收银台将为你展示该学生优惠商品</div>
+          </div>
+          <div class="card card-team">
+            <div class="tm-stairs">
+              <svg class="tm-trail" viewBox="0 0 200 72" fill="none" aria-hidden="true">
+                <path d="M14 64 C 60 58, 96 40, 186 10" stroke="#7df23a" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round" opacity=".75"/>
+              </svg>
+              <span class="tm-spark k1">✦</span>
+              <span class="tm-spark k2">✦</span>
+              <div class="tm-step s1">
+                <div class="tm-avas"><span class="tm-ava"></span><span class="tm-ava"></span></div>
+                <div class="tm-name">2人团</div>
+                <div class="tm-days"><i>+</i>15<i>天</i></div>
+                <span class="tm-qc">拼团季卡</span>
+              </div>
+              <div class="tm-step s2">
+                <div class="tm-avas"><span class="tm-ava"></span><span class="tm-ava"></span><span class="tm-ava"></span></div>
+                <div class="tm-name">3人团</div>
+                <div class="tm-days"><i>+</i>30<i>天</i></div>
+                <span class="tm-qc">拼团季卡</span>
+              </div>
+            </div>
+            <div class="tm-line">拼团买季卡，最高再送<b>30天</b></div>
+            <div class="tm-foot">*成团并购买后，赠送时长自动到账</div>
+          </div>
+          <div class="card card-invite">
+            <div class="inv-card">
+              <span class="inv-max">最高<br>可得</span>
+              <span class="inv-num">30</span>
+              <span class="inv-unit">天</span>
+              <span class="inv-orbit"></span>
+              <span class="inv-shield"><span class="inv-tick"></span></span>
+              <span class="inv-send">送</span>
+            </div>
+            <div class="inv-line">邀好友认证，双方各送<b>15天</b>会员</div>
+            <div class="inv-foot">扫右侧二维码 &gt; 分享给好友 &gt; 好友认证成功 &gt; 奖励发放至账户</div>
+          </div>
+        </div>
+      </div>
+      <div class="cards-zone vpost" style="display:none">
+        <div class="cards-head vpost">
+          <div class="chead"><span class="ct">携兄弟，拼出冠军</span></div>
+          <div class="chead"><span class="ct">好友到齐，才算数</span></div>
+        </div>
+        <div class="cards vpost">
+          <div class="card card-team">
+            <div class="tm-stairs">
+              <svg class="tm-trail" viewBox="0 0 200 72" fill="none" aria-hidden="true">
+                <path d="M14 64 C 60 58, 96 40, 186 10" stroke="#7df23a" stroke-width="2.5" stroke-dasharray="6 7" stroke-linecap="round" opacity=".75"/>
+              </svg>
+              <span class="tm-spark k1">✦</span>
+              <span class="tm-spark k2">✦</span>
+              <div class="tm-step s1">
+                <div class="tm-avas"><span class="tm-ava"></span><span class="tm-ava"></span></div>
+                <div class="tm-name">2人团</div>
+                <div class="tm-days"><i>+</i>15<i>天</i></div>
+                <span class="tm-qc">拼团季卡</span>
+              </div>
+              <div class="tm-step s2">
+                <div class="tm-avas"><span class="tm-ava"></span><span class="tm-ava"></span><span class="tm-ava"></span></div>
+                <div class="tm-name">3人团</div>
+                <div class="tm-days"><i>+</i>30<i>天</i></div>
+                <span class="tm-qc">拼团季卡</span>
+              </div>
+            </div>
+            <div class="tm-line">拼团买季卡，最高再送<b>30天</b></div>
+            <div class="tm-foot">*成团并购买后，赠送时长自动到账</div>
+          </div>
+          <div class="card card-invite">
+            <span class="inv-orbit"></span>
+            <span class="inv-shield"><span class="inv-tick"></span></span>
+            <span class="inv-send">送</span>
+            <div class="inv2">
+              <div class="inv2-head">
+                <span class="t">邀好友认证，双方各送</span>
+                <span class="h15">15</span>
+                <span class="t">天会员</span>
+              </div>
+              <div class="inv2-stage">
+                <div class="inv2-friend f1"><span class="plus">+15天</span><span class="ava"></span></div>
+                <div class="inv2-friend f2"><span class="plus">+15天</span><span class="ava"></span></div>
+                <div class="inv2-friend f3"><span class="plus">+15天</span><span class="ava"></span></div>
+                <div class="inv2-friend f4"><span class="plus">+15天</span><span class="ava"></span></div>
+                <div class="inv2-card">
+                  <svg class="inv2-cat" viewBox="0 0 120 110" aria-hidden="true">
+                    <defs><linearGradient id="catg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe79a"/><stop offset="1" stop-color="#f0b400"/></linearGradient></defs>
+                    <path d="M30 30 L24 6 L46 22 Z M90 30 L96 6 L74 22 Z" fill="url(#catg)"/>
+                    <ellipse cx="60" cy="62" rx="50" ry="44" fill="url(#catg)"/>
+                    <ellipse cx="42" cy="60" rx="6" ry="9" fill="#d99a00" opacity=".55"/>
+                    <ellipse cx="78" cy="60" rx="6" ry="9" fill="#d99a00" opacity=".55"/>
+                  </svg>
+                  <span class="inv2-tag">加速会员</span>
+                  <div class="inv2-mid">
+                    <span class="inv2-max">最高得</span>
+                    <span class="inv2-num">30</span>
+                    <span class="inv2-unit">天</span>
+                  </div>
+                </div>
+              </div>
+              <div class="inv2-foot">1. 微信扫码生成车队 › 2. 分享给好友 › 3. 好友上车并认证学生 › 4. 时长发放至双方账户</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- 右侧认证栏 -->
+    <div class="auth">
+      <span class="avatar"></span>
+      <span class="auth-tag vpre">学生身份未认证</span>
+      <span class="vbadge vpost" style="display:none">学生身份已认证</span>
+      <span class="phone">137****9752</span>
+      <div class="qr-box">
+        <span class="qr-title">微信扫码认证学生身份</span>
+        <div class="qr">
+          <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span>
+          <span class="center"></span><span class="mp"></span><span class="scan"></span>
+        </div>
+      </div>
+      <button class="verify">验证完成</button>
+      <span class="auth-note">请确保登录手机号与大学生认证一致</span>
+    </div>
+  </div>
+  </div><!-- /page-promo -->
+
+  <!-- ===== 充值页 ===== -->
+  <div class="page page-recharge">
+    <span class="rch-wm"></span>
+    <div class="rch">
+      <div class="rch-head">
+        <span class="u-ava"></span>
+        <div class="u-info">
+          <div class="u-row1">
+            <span class="u-phone">137****9752</span>
+            <span class="u-real">已实名认证</span>
+            <span class="u-stu vpost" style="display:none">学生身份</span>
+            <span class="u-id">ID: 1126981796</span>
+          </div>
+          <div class="u-row2"><span class="gem"></span>全平台会员时长 <b>2026-11-26</b> 到期，购买后有效期顺延</div>
+        </div>
+      </div>
+      <div class="rch-body">
+        <div class="rch-panel">
+          <div class="promo-banner vpost" id="promoBanner" style="display:none" title="邀好友得会员 · 前往大学生优惠页">
+            <svg class="pb-art" viewBox="0 0 94 50" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+              <defs><linearGradient id="pbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d6eefb"/><stop offset="1" stop-color="#a4d2ee"/></linearGradient></defs>
+              <ellipse cx="44" cy="27" rx="42" ry="24" fill="url(#pbg)"/>
+              <g><path d="M14 50 q0-13 9-13 q9 0 9 13 z" fill="#3fae7e"/><circle cx="23" cy="22" r="5.2" fill="#f3cba2"/><path d="M16 30 q-5-7 -3-13" stroke="#3fae7e" stroke-width="3.4" fill="none" stroke-linecap="round"/><circle cx="13" cy="16" r="2.4" fill="#f3cba2"/></g>
+              <g><path d="M52 50 q0-14 9-14 q9 0 9 14 z" fill="#2f9d72"/><circle cx="61" cy="20" r="5" fill="#f3cba2"/><path d="M54 28 q-4-8 -1-14" stroke="#2f9d72" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="53" cy="13" r="2.3" fill="#f3cba2"/><path d="M68 28 q4-8 1-14" stroke="#2f9d72" stroke-width="3.2" fill="none" stroke-linecap="round"/><circle cx="69" cy="13" r="2.3" fill="#f3cba2"/></g>
+              <g><path d="M30 50 q0-16 12-16 q12 0 12 16 z" fill="#eef4f8"/><circle cx="42" cy="21" r="6.6" fill="#f6d2ab"/><path d="M35.5 20 a7 7 0 0 1 13 0" stroke="#2b3a55" stroke-width="2" fill="none"/><rect x="34" y="19" width="3" height="5" rx="1.5" fill="#2b3a55"/><rect x="47" y="19" width="3" height="5" rx="1.5" fill="#2b3a55"/><path d="M33 36 q-7-10 -4-19" stroke="#eef4f8" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="29" cy="16" r="2.8" fill="#f6d2ab"/><path d="M51 36 q7-10 4-19" stroke="#eef4f8" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="55" cy="16" r="2.8" fill="#f6d2ab"/></g>
+            </svg>
+            <span class="pb-txt">邀好友得会员</span>
+            <span class="pb-go">上车</span>
+          </div>
+          <div class="rp-title"><b>全平台会员</b><span>PC/手游/主机通用</span></div>
+          <div class="rp-cards vpre">
+            <div class="price sel" data-price="23"><span class="rec">推荐</span><span class="pname">连续包月</span><span class="pprice"><span class="y">¥</span><span class="n">23</span></span><span class="punit">23元/月</span></div>
+            <div class="price" data-price="239"><span class="pname">365天</span><span class="pprice"><span class="y">¥</span><span class="n">239</span></span><span class="punit">19.9元/月</span></div>
+            <div class="price" data-price="129"><span class="pname">180天</span><span class="pprice"><span class="y">¥</span><span class="n">129</span></span><span class="punit">21.5元/月</span></div>
+            <div class="price" data-price="69"><span class="pname">90天</span><span class="pprice"><span class="y">¥</span><span class="n">69</span></span><span class="punit">23元/月</span></div>
+            <div class="price" data-price="25"><span class="pname">30天</span><span class="pprice"><span class="y">¥</span><span class="n">25</span></span><span class="punit">25元/月</span></div>
+          </div>
+          <div class="rp-cards vpost" style="display:none">
+            <div class="price hotcard sel" data-price="139"><span class="hot">限时再送xx天</span><span class="pname">365天</span><span class="pprice"><span class="y">¥</span><span class="n">139</span></span><span class="old">239</span></div>
+            <div class="price" data-price="72"><span class="save">已省57元</span><span class="pname">180天</span><span class="pprice"><span class="y">¥</span><span class="n">72</span></span><span class="old">129</span></div>
+            <div class="price" data-price="40"><span class="save">已省29元</span><span class="pname">90天</span><span class="pprice"><span class="y">¥</span><span class="n">40</span></span><span class="old">69</span></div>
+            <div class="price" data-price="14"><span class="save">已省11元</span><span class="pname">30天</span><span class="pprice"><span class="y">¥</span><span class="n">14</span></span><span class="old">25</span></div>
+          </div>
+          <div class="rp-note vpre-ghost">到期按每月23元自动续费，会员延长一个月，可随时取消<i class="i">?</i></div>
+          <div class="rp-perks">
+            <span class="perk"><span class="pi">⚡</span>帕拉斯引擎强力加持</span>
+            <span class="perk"><span class="pi">🛡</span>战队同款高速专线</span>
+            <span class="perk"><span class="pi">🎁</span>优惠福利天天派送</span>
+            <span class="perk"><span class="pi">👤</span>金牌专属无忧客服</span>
+          </div>
+        </div>
+        <div class="rch-side">
+          <div class="rs-price" id="rsPrice"><span class="y">¥</span><span class="n">23</span></div>
+          <div class="rs-coupon">暂无可用优惠券</div>
+          <div class="rs-qr">
+            <div class="qr" style="width:138px;height:138px">
+              <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span>
+              <span class="center"></span><span class="mp"></span><span class="scan"></span>
+            </div>
+          </div>
+          <div class="rs-pay"><span class="wx">微</span><span class="ali">支</span>扫码支付</div>
+          <div class="rs-agree">已同意 <a href="#">用户协议</a> <a href="#">自动续费协议</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /stage -->
+</div>
+
+<div class="switcher">
+  <span class="sw-label">当前状态</span>
+  <span class="sw-state" id="swState">认证前</span>
+  <span class="sw-btn" id="swBtn" title="切换认证状态"></span>
+</div>
+
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.tab[data-page]');
+  var pages = {promo:document.querySelector('.page-promo'), recharge:document.querySelector('.page-recharge')};
+  var device = document.querySelector('.device');
+  // 切换 tab 页（可复用，供 URL 参数预设调用）
+  function goTab(k){
+    tabs.forEach(function(x){x.classList.toggle('on', x.getAttribute('data-page')===k)});
+    Object.keys(pages).forEach(function(p){pages[p].classList.toggle('active', p===k)});
+    device.classList.toggle('theme-recharge', k==='recharge');
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('click', function(){ goTab(t.getAttribute('data-page')); });
+  });
+  var rsN = document.querySelector('#rsPrice .n');
+  var rsBox = document.getElementById('rsPrice');
+  var bannerEl = document.getElementById('promoBanner');
+  var pbTxt = bannerEl.querySelector('.pb-txt');
+  // 选中 90 天卡时，banner 切青色质感 + 换文案
+  function syncBanner(card){
+    var is90 = card && card.getAttribute('data-price') === '40';
+    bannerEl.classList.toggle('cyan', is90);
+    pbTxt.textContent = is90 ? '拼季卡赠额外会员' : '邀好友得会员';
+  }
+  document.querySelectorAll('.rp-cards .price').forEach(function(p){
+    p.addEventListener('click', function(){
+      var group = p.closest('.rp-cards');
+      group.querySelectorAll('.price').forEach(function(x){x.classList.remove('sel')});
+      p.classList.add('sel');
+      rsN.textContent = p.getAttribute('data-price');
+      rsBox.classList.remove('bump'); void rsBox.offsetWidth; rsBox.classList.add('bump');
+      syncBanner(p);
+    });
+  });
+
+  // 右上角 banner：点击跳转到大学生优惠页（保持当前认证状态）
+  var promoBanner = document.getElementById('promoBanner');
+  var tabPromo = document.querySelector('.tab[data-page="promo"]');
+  promoBanner.addEventListener('click', function(){
+    tabs.forEach(function(x){x.classList.remove('on')});
+    tabPromo.classList.add('on');
+    Object.keys(pages).forEach(function(p){pages[p].classList.toggle('active', p==='promo')});
+    device.classList.remove('theme-recharge');
+  });
+
+  // 认证状态切换（认证前 ⇄ 认证后）· 提取为可复用函数
+  var swBtn = document.getElementById('swBtn');
+  var swState = document.getElementById('swState');
+  function setAuth(authed){
+    device.classList.toggle('authed', authed);
+    swState.textContent = authed ? '认证后' : '认证前';
+    document.querySelectorAll('.vpre').forEach(function(el){el.style.display = authed ? 'none' : ''});
+    document.querySelectorAll('.vpost').forEach(function(el){el.style.display = authed ? '' : 'none'});
+    document.querySelectorAll('.vpre-ghost').forEach(function(el){el.style.visibility = authed ? 'hidden' : 'visible'});
+    // 右侧大价格自动同步为当前可见价格组中选中卡的价格
+    var activeGroup = document.querySelector('.rp-cards.' + (authed ? 'vpost' : 'vpre'));
+    var selCard = activeGroup.querySelector('.price.sel');
+    if (selCard){
+      rsN.textContent = selCard.getAttribute('data-price');
+      rsBox.classList.remove('bump'); void rsBox.offsetWidth; rsBox.classList.add('bump');
+      syncBanner(selCard);
+    }
+  }
+  swBtn.addEventListener('click', function(){ setAuth(!device.classList.contains('authed')); });
+
+  // URL 参数预设状态：?tab=recharge|promo & ?auth=post|pre
+  // 供产品设计文档 iframe 嵌入时自动匹配右侧文字描述的状态
+  try{
+    var qs = new URLSearchParams(window.location.search);
+    var pTab = qs.get('tab');
+    var pAuth = qs.get('auth');
+    if(pTab === 'recharge' || pTab === 'promo') goTab(pTab);
+    if(pAuth === 'post') setAuth(true);
+  }catch(e){}
+})();
+</script>
+
+</body>
+</html>
